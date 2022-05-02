@@ -28,9 +28,11 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
     public static final String COLUMN_ACCOUNT_HOLDER_NAME = "ACCOUNT_HOLDER_NAME";
     public static final String COLUMN_BALANCE = "BALANCE";
     public static final String TABLE_TRANSACTIONS = "TRANSACTIONS";
+    public static final String COLUMN_ID = "ID";
     public static final String COLUMN_LOG_DATE = "LOG_DATE";
     public static final String COLUMN_EXPENSE_TYPE = "EXPENSE_TYPE";
     public static final String COLUMN_AMOUNT = "AMOUNT";
+
 
     public PersistentAccountDAO(@Nullable Context context) {
         super(context, "bank.db", null, 1);
@@ -158,7 +160,7 @@ public class PersistentAccountDAO extends SQLiteOpenHelper implements AccountDAO
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String sqlAccount = "CREATE TABLE " + TABLE_ACCOUNTS + " (" + COLUMN_ACCOUNT_NUMBER + " TEXT PRIMARY KEY, " + COLUMN_BANK_NAME + " TEXT, " + COLUMN_ACCOUNT_HOLDER_NAME + " TEXT, " + COLUMN_BALANCE + " REAL)";
-        String sqlTrans = "CREATE TABLE " + TABLE_TRANSACTIONS + " (" + COLUMN_LOG_DATE + " DATE PRIMARY KEY, " + COLUMN_ACCOUNT_NUMBER + " TEXT REFERENCES ACCOUNTS (ACCOUNT_NUMBER), " + COLUMN_EXPENSE_TYPE + " TEXT, " + COLUMN_AMOUNT + " REAL)";
+        String sqlTrans = "CREATE TABLE " + TABLE_TRANSACTIONS + " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_LOG_DATE + " DATE, " + COLUMN_ACCOUNT_NUMBER + " TEXT REFERENCES ACCOUNTS (ACCOUNT_NUMBER), " + COLUMN_EXPENSE_TYPE + " TEXT, " + COLUMN_AMOUNT + " REAL)";
 
         sqLiteDatabase.execSQL(sqlTrans);
         sqLiteDatabase.execSQL(sqlAccount);

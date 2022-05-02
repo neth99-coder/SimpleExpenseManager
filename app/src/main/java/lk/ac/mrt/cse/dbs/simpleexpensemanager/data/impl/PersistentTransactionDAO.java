@@ -32,6 +32,7 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
     public static final String COLUMN_ACCOUNT_HOLDER_NAME = "ACCOUNT_HOLDER_NAME";
     public static final String COLUMN_BALANCE = "BALANCE";
     public static final String TABLE_TRANSACTIONS = "TRANSACTIONS";
+    public static final String COLUMN_ID = "ID";
     public static final String COLUMN_LOG_DATE = "LOG_DATE";
     public static final String COLUMN_EXPENSE_TYPE = "EXPENSE_TYPE";
     public static final String COLUMN_AMOUNT = "AMOUNT";
@@ -64,7 +65,7 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
 
         if(cursor.moveToFirst()){
             do{
-                String sDate = cursor.getString(0);
+                String sDate = cursor.getString(1);
                 SimpleDateFormat sdf3 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
                 Date date = null;
@@ -73,12 +74,12 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
 
                 }catch (Exception e){ e.printStackTrace(); }
 
-                String accountNumber= cursor.getString(1);
+                String accountNumber= cursor.getString(2);
 
-                String sExpenseType = cursor.getString(2);
+                String sExpenseType = cursor.getString(3);
                 ExpenseType expenseType = (sExpenseType.equals("EXPENSE"))? ExpenseType.EXPENSE : ExpenseType.INCOME;
 
-                double amount = cursor.getDouble(3);
+                double amount = cursor.getDouble(4);
 
                 Transaction transaction = new Transaction(date,accountNumber,expenseType,amount);
                 transactions.add(transaction);
@@ -101,8 +102,8 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
 
         if(cursor.moveToFirst()){
             do{
-                String sDate = cursor.getString(0);
-                //Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+                String sDate = cursor.getString(1);
+
                 SimpleDateFormat sdf3 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 
                 Date date = null;
@@ -111,12 +112,12 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
 
                 }catch (Exception e){ e.printStackTrace(); }
 
-                String accountNumber= cursor.getString(1);
+                String accountNumber= cursor.getString(2);
 
-                String sExpenseType = cursor.getString(2);
+                String sExpenseType = cursor.getString(3);
                 ExpenseType expenseType = (sExpenseType.equals("EXPENSE"))? ExpenseType.EXPENSE : ExpenseType.INCOME;
 
-                double amount = cursor.getDouble(3);
+                double amount = cursor.getDouble(4);
 
                 Transaction transaction = new Transaction(date,accountNumber,expenseType,amount);
                 transactions.add(transaction);
@@ -134,7 +135,8 @@ public class PersistentTransactionDAO extends SQLiteOpenHelper implements Transa
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         String sqlAccount = "CREATE TABLE " + TABLE_ACCOUNTS + " (" + COLUMN_ACCOUNT_NUMBER + " TEXT PRIMARY KEY, " + COLUMN_BANK_NAME + " TEXT, " + COLUMN_ACCOUNT_HOLDER_NAME + " TEXT, " + COLUMN_BALANCE + " REAL)";
-        String sqlTrans = "CREATE TABLE " + TABLE_TRANSACTIONS + " (" + COLUMN_LOG_DATE + " DATE PRIMARY KEY, " + COLUMN_ACCOUNT_NUMBER + " TEXT REFERENCES ACCOUNTS (ACCOUNT_NUMBER), " + COLUMN_EXPENSE_TYPE + " TEXT, " + COLUMN_AMOUNT + " REAL)";
+        String sqlTrans = "CREATE TABLE " + TABLE_TRANSACTIONS + " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_LOG_DATE + " DATE, " + COLUMN_ACCOUNT_NUMBER + " TEXT REFERENCES ACCOUNTS (ACCOUNT_NUMBER), " + COLUMN_EXPENSE_TYPE + " TEXT, " + COLUMN_AMOUNT + " REAL)";
+
 
         sqLiteDatabase.execSQL(sqlTrans);
         sqLiteDatabase.execSQL(sqlAccount);
