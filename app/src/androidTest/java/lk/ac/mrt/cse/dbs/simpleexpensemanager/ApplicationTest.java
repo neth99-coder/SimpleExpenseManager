@@ -16,14 +16,57 @@
 
 package lk.ac.mrt.cse.dbs.simpleexpensemanager;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+
+import static org.junit.Assert.assertTrue;
+
+import android.content.Context;
+
+import androidx.test.core.app.ApplicationProvider;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.ExpenseManager;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.PersistentExpenseManager;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.exception.ExpenseManagerException;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
+public class ApplicationTest {
+
+    private static ExpenseManager expenseManager;
+
+    @Before
+    public void setUp() throws ExpenseManagerException {
+        Context context = ApplicationProvider.getApplicationContext();
+        expenseManager = new PersistentExpenseManager(context);
     }
+
+    @Test
+    public void testAddAccount(){
+
+        expenseManager.addAccount("190190A","NSB","TestUser",1000);
+        List<String> accountNumberList = expenseManager.getAccountNumbersList();
+        assertTrue(accountNumberList.contains("190190A"));
+    }
+
+    @Test
+    public void testAddTransaction() throws ParseException {
+
+        int prev_size = expenseManager.getTransactionLogs().size();
+        expenseManager.getTransactionsDAO().logTransaction(new Date(),"190190A", ExpenseType.EXPENSE,100);
+        int new_size = expenseManager.getTransactionLogs().size();
+
+        assertTrue(prev_size+1 == new_size );
+
+    }
+
 }
+
+
